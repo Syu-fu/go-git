@@ -2,6 +2,7 @@ package command
 
 import (
 	"compress/zlib"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -51,6 +52,29 @@ func decompress(filepath string) string {
 	b := make([]byte, 2048)
 	z.Read(b)
 	return string(b)
+}
+
+func parseTree(content string) string {
+	i := 20
+	var sb strings.Builder
+	for len(content) > 0 {
+		pos := strings.Index(content, "\x00")
+		fileTypeNumber := content[0:7]
+		var fileType string
+		if fileTypeNumber[0:3] == "100" {
+			fileType = "blob"
+		} else if fileTypeNumber[0:3] == "\xfe40" {
+			fileTypeNumber = strings.Replace(fileTypeNumber, "\xfe", "0", 1)
+			fileType = "tree"
+		}
+		objectName := content[7:pos]
+		id := string(content[pos+1 : pos+21])
+		hash := hex.EncodeToString([]byte(string(id)))
+		content = content[pos+i:]
+		i = 21
+		sb.WriteString(fileTypeNumber + fileType + " " + hash + "    " + objectName + "\n")
+	}
+	return sb.String()
 }
 
 func HashToFilePath(hash string) string {
@@ -105,7 +129,7 @@ func ParseGitObject(object string) GitObject {
 	case "tree":
 		gitObject.Type = objectType
 		gitObject.FileSize = objectSize
-		gitObject.Content = content
+		gitObject.Content = parseTree(content)
 		return gitObject
 	default:
 		panic("No git file")
