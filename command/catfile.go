@@ -66,13 +66,20 @@ func parseTree(content string) string {
 		} else if fileTypeNumber[0:3] == "\xfe40" {
 			fileTypeNumber = strings.Replace(fileTypeNumber, "\xfe", "0", 1)
 			fileType = "tree"
+		} else if fileTypeNumber[0:4] == "\xb4120" {
+			fileTypeNumber = strings.Replace(fileTypeNumber, "\xb4", "", 1)
+			fileTypeNumber += " "
+			fileType = "blob"
+		} else if fileTypeNumber[0:3] == "160" {
+			fileType = "commit"
 		}
 		objectName := content[7:pos]
 		id := string(content[pos+1 : pos+21])
 		hash := hex.EncodeToString([]byte(string(id)))
 		content = content[pos+i:]
 		i = 21
-		sb.WriteString(fileTypeNumber + fileType + " " + hash + "    " + objectName + "\n")
+		tmpStr := fileTypeNumber + fileType + " " + hash
+		sb.WriteString(tmpStr + strings.Repeat(" ", 56-len(tmpStr)) + objectName + "\n")
 	}
 	return sb.String()
 }
