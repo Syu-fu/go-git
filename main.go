@@ -12,6 +12,10 @@ func main() {
 	t := catFile.Bool("t", false, "show object type")
 	s := catFile.Bool("s", false, "show object size")
 	p := catFile.Bool("p", false, "pretty-print object's content")
+
+	init := flag.NewFlagSet("init", flag.ExitOnError)
+	b := init.String("b", "main", "Use the specified name for the initial branch in the newly created repository.")
+
 	switch os.Args[1] {
 	case "cat-file":
 		catFile.Parse(os.Args[2:])
@@ -30,6 +34,10 @@ func main() {
 
 		command.CatFile(catFile.Arg(0), option)
 		break
+	case "init":
+		init.Parse(os.Args[2:])
+
+		command.Init(*b)
 	default:
 		fmt.Println("go-git: '" + os.Args[1] + "' is not a git command. See 'go-git --help'.")
 	}
