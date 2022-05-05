@@ -12,8 +12,8 @@ import (
 func Init(initialBranchName string) {
 
 	gitPath := path.Join(".", ".git")
+	absPath, _ := filepath.Abs(gitPath)
 	if _, err := os.Stat(gitPath); err == nil {
-		absPath, _ := filepath.Abs(gitPath)
 		fmt.Println("Reinitialized existing Git repository in " + absPath)
 		os.Exit(0)
 	}
@@ -44,4 +44,6 @@ func Init(initialBranchName string) {
 	cfg.Section("core").Key("bare").SetValue("false")
 	cfg.Section("core").Key("logallrefupdates").SetValue("true")
 	cfg.SaveToIndent(path.Join(gitPath, "config"), "	")
+
+	fmt.Println("Initialized empty Git repository in " + absPath + "/")
 }
