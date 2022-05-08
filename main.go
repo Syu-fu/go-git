@@ -38,6 +38,8 @@ func main() {
 		init.Parse(os.Args[2:])
 
 		command.Init(*b)
+	case "add":
+		command.Add(os.Args[2:])
 	default:
 		fmt.Println("go-git: '" + os.Args[1] + "' is not a git command. See 'go-git --help'.")
 	}

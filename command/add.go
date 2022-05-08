@@ -11,6 +11,12 @@ import (
 	"path"
 )
 
+func Add(filenameList []string) {
+	for _, v := range filenameList {
+		createGitObjectBlob(v)
+	}
+}
+
 func getObjectId(store string) string {
 	h := sha1.New()
 	io.WriteString(h, store)
