@@ -33,7 +33,6 @@ func createGitObjectBlob(filepath string) {
 	b, err := ioutil.ReadAll(f)
 	content := string(b)
 	header := "blob " + fmt.Sprint(len(content)) + "\x00"
-	fmt.Println(getObjectId(header + content))
 	addFilepath := getObjectId(header + content)
 
 	gitPath := GitRootPath()
