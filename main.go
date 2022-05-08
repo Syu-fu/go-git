@@ -33,7 +33,6 @@ func main() {
 		}
 
 		command.CatFile(catFile.Arg(0), option)
-		break
 	case "init":
 		init.Parse(os.Args[2:])
 
