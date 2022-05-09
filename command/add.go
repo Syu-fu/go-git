@@ -35,7 +35,7 @@ func createGitObjectBlob(filepath string) {
 	header := "blob " + fmt.Sprint(len(content)) + "\x00"
 	addFilepath := getObjectId(header + content)
 
-	gitPath := GitRootPath()
+	gitPath := gitRootPath()
 	os.Mkdir(path.Join(gitPath, "objects", addFilepath[:2]), 0755)
 
 	nf, err := os.Create(path.Join(gitPath, "objects", addFilepath[:2], addFilepath[2:]))

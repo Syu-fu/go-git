@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -30,7 +29,7 @@ func CatFile(hash string, option string) {
 }
 
 func DecodeGitObject(hash string) GitObject {
-	path := HashToFilePath(hash)
+	path := hashToFilePath(hash)
 	object := decompress(path)
 
 	return ParseGitObject(object)
@@ -82,30 +81,6 @@ func parseTree(content string) string {
 		sb.WriteString(tmpStr + strings.Repeat(" ", 56-len(tmpStr)) + objectName + "\n")
 	}
 	return sb.String()
-}
-
-func HashToFilePath(hash string) string {
-	dir := hash[0:2]
-	file := hash[2:]
-	return string(filepath.Join(GitRootPath(), "objects", dir, file))
-}
-
-func GitRootPath() string {
-	path := RepoRootPath(".")
-	return filepath.Join(path, ".git")
-}
-
-func RepoRootPath(currentPath string) string {
-	if _, err := os.Stat(filepath.Join(currentPath, ".git")); err == nil {
-		return currentPath
-	}
-
-	parentPath := filepath.Join(currentPath, "..")
-	if parentPath == currentPath {
-		panic("No git repo directory")
-	}
-
-	return RepoRootPath(parentPath)
 }
 
 func ParseGitObject(object string) GitObject {
