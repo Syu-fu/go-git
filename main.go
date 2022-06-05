@@ -18,7 +18,10 @@ func main() {
 
 	switch os.Args[1] {
 	case "cat-file":
-		catFile.Parse(os.Args[2:])
+		if err := catFile.Parse(os.Args[2:]); err != nil {
+			fmt.Println(err)
+			os.Exit(129)
+		}
 
 		option := "pretty-print"
 		if flag.NFlag() > 1 {
@@ -34,7 +37,10 @@ func main() {
 
 		command.CatFile(catFile.Arg(0), option)
 	case "init":
-		init.Parse(os.Args[2:])
+		if err := init.Parse(os.Args[2:]); err != nil {
+			fmt.Println(err)
+			os.Exit(129)
+		}
 
 		command.Init(*b)
 	case "add":
