@@ -13,7 +13,7 @@ func Init(initialBranchName string) {
 
 	gitPath := path.Join(".", ".git")
 	absPath, _ := filepath.Abs(gitPath)
-	if _, err := os.Stat(gitPath); err == nil {
+	if _, err := os.Stat(gitPath); err != nil {
 		fmt.Println("Reinitialized existing Git repository in " + absPath)
 		os.Exit(0)
 	}
