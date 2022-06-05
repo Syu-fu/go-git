@@ -19,7 +19,11 @@ func Add(filenameList []string) {
 
 func getObjectId(store string) string {
 	h := sha1.New()
-	io.WriteString(h, store)
+	_, err := io.WriteString(h, store)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(129)
+	}
 	return hex.EncodeToString(h.Sum(nil))
 }
 
@@ -31,12 +35,19 @@ func createGitObjectBlob(filepath string) {
 	defer f.Close()
 
 	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(129)
+	}
 	content := string(b)
 	header := "blob " + fmt.Sprint(len(content)) + "\x00"
 	addFilepath := getObjectId(header + content)
 
 	gitPath := gitRootPath()
-	os.Mkdir(path.Join(gitPath, "objects", addFilepath[:2]), 0755)
+	if err := os.Mkdir(path.Join(gitPath, "objects", addFilepath[:2]), 0755); err != nil {
+		fmt.Println(err)
+		os.Exit(129)
+	}
 
 	nf, err := os.Create(path.Join(gitPath, "objects", addFilepath[:2], addFilepath[2:]))
 	if err != nil {
@@ -44,5 +55,8 @@ func createGitObjectBlob(filepath string) {
 	}
 	nw := zlib.NewWriter(nf)
 	defer nw.Close()
-	nw.Write([]byte(header + content))
+	if _, err := nw.Write([]byte(header + content)); err != nil {
+		fmt.Println(err)
+		os.Exit(129)
+	}
 }

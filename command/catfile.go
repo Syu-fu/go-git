@@ -49,7 +49,10 @@ func decompress(filepath string) string {
 	defer z.Close()
 
 	b := make([]byte, 2048)
-	z.Read(b)
+	if _, err := z.Read(b); err != nil {
+		fmt.Println(err)
+		os.Exit(129)
+	}
 	return string(b)
 }
 
